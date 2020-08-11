@@ -1,0 +1,40 @@
+{%  extends 'accounts/main.html' %}
+{% load static %}
+{% block content %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems);
+  });
+</script>
+<div class="row">
+	<div class="col s12 m3">
+		<form action="" method="POST">
+			{% csrf_token %}
+			{{ form.management_form }}
+	      <table>
+	        <thead>
+	          <tr>
+	              <th>Product</th>
+	              <th></th>
+	              <th>Status</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+				{% for field in form %}
+					<tr>
+						<td>{{field.product}}<td>
+						<td>{{field.status}}<td>
+					</tr>
+				{% endfor %}
+				<br>
+			    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    				<i class="material-icons right">send</i>
+				</button>
+			</tbody>
+		  </table>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

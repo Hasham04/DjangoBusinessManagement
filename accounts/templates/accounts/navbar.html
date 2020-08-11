@@ -1,0 +1,70 @@
+{% load static %}
+
+
+<style>
+  .hello-msg{
+    font-size: 18px;
+    color: #fff;
+    margin-right: 20px;
+  }
+
+</style>
+<script type="text/javascript">  
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    var instances = M.Sidenav.init(elems);
+  });
+</script>
+
+<nav class="grey darken-3">
+  <div class="nav-wrapper">
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <a href="{% url 'home' %}" class="brand-logo center"><img src="{% static 'images/logo.png' %}"></a>
+    <ul class="left hide-on-med-and-down">
+      {% if request.user.is_staff %}
+      <li>
+        <a href="{% url 'home' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
+      </li>
+      <li>
+        <a href="{% url 'products' %}"><i class="material-icons left">shopping_cart</i>Products</a>
+      </li>
+      {% else %}
+      <li>
+        <a class="nav-link" href="{% url 'account' %}"><i class="material-icons left">settings</i> Settings</a>
+      </li>
+      {% endif %}
+    </ul>
+    <ul class="right hide-on-med-and-down">
+      <li>
+        <a class="nav-link" href="{% url 'account' %}"><i class="material-icons left">mood</i> Hello, {{request.user}}</a>
+      </li>
+      <li>
+        <a class="nav-link" href="{% url 'logout' %}"><i class="material-icons right">exit_to_app</i>Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<ul class="sidenav" id="mobile-demo">
+  <li>
+    <a class="nav-link" href="{% url 'account' %}"><i class="material-icons left">sentiment_very_satisfied</i> Hello, {{request.user}}</a>
+  </li>
+  {% if request.user.is_staff %}
+  <li class="active">
+    <a href="{% url 'home' %}"><i class="material-icons left">home</i>Dashboard</a>
+  </li>
+  <li>
+    <a href="{% url 'products' %}"><i class="material-icons left">shopping_cart</i>Products</a>
+  </li>
+  {% else %}
+  <li>
+    <a class="nav-link" href="{% url 'account' %}"><i class="material-icons left">settings</i> Settings</a>
+  </li>
+  {% endif %}
+  <li>
+    <a class="nav-link" href="{% url 'logout' %}"><i class="material-icons right">exit_to_app</i>Logout</a>
+  </li>
+</ul>
+
+
+

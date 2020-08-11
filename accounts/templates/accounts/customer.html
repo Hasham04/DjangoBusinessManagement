@@ -1,0 +1,122 @@
+{%  extends 'accounts/main.html' %}
+
+{% block content %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems);
+  });
+</script>
+<br>
+
+<div class="row">
+	<div class="col">
+		<div class="card blue-grey darken-3 z-depth-5">
+			<div class="card-content white-text">
+				<h5><i class="material-icons left">person_outline</i>{{customer.name}}</h5>
+				<hr>
+
+				&nbsp;&nbsp;&nbsp;<a class="btn btn-small waves-effect" href="{% url 'update_customer' customer.id %}"><i class="material-icons left">edit</i>Update Customer</a>&nbsp;&nbsp;&nbsp;
+
+				<a class="btn btn-small waves-effect red" href="{% url 'delete_customer' customer.id %}"><i class="material-icons left">delete</i>Delete Customer</a>&nbsp;&nbsp;&nbsp;
+				
+				<a class="btn btn-small waves-effect blue darken-1" href="{% url 'create_order' customer.id %}"><i class="material-icons left">send</i>Place Orders</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="col s12 m3">
+		<div class="card blue-grey darken-3 z-depth-5">
+			<div class="card-content white-text">
+				<h5><i class="material-icons left">contact_mail</i> Contact Information</h5>
+				<hr>
+				<p><i class="material-icons left">email</i>Email: {{customer.email}}</p>
+				<br>
+				<p><i class="material-icons left">phone</i> Phone: {{customer.phone}}</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col s12 m3 ">
+		<div class="card blue-grey darken-3 z-depth-5">
+			<div class="card-content white-text">
+				<h5><i class="material-icons">list</i> Total Orders</h5>
+				<hr>
+				<h3 style="text-align: center">{{order_count}}</h3>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<br>
+<div class="row">
+	<div class="col s12 m4">
+		<div class="card grey darken-1 z-depth-5">
+			<div class="card-content white-text">
+				<form method="get">
+					<div class="form-group">
+						<h5><i class="material-icons left">filter_alt</i>Search Orders:</h5>
+						<p>Product</p>
+							{{myFilter.form.product}}
+						<br>
+						<p>Status</p>
+							{{myFilter.form.status}}
+						<br>
+						<p><i class="material-icons left">note</i>Note</p>
+							{{myFilter.form.note}}
+						<br>
+						<p><i class="material-icons left">date_range</i>Date created is greater than or equal to m/d/y:</p>
+							{{myFilter.form.start_date}}
+						<br>
+						<p><i class="material-icons left">date_range</i>Date created is less than or equal to m/d/y:</p>
+							{{myFilter.form.end_date}}
+			    		<button class="btn btn-primary" type="submit"><i class="material-icons left">search</i>Search
+						</button>
+					</div>
+		 		 </form>
+			</div>
+		</div>
+		<br>
+		<div class="card grey darken-2 z-depth-5">
+			<div class="card-content white-text">
+				<h4>Total Business with {{customer.name}}:<strong> $ {{totalprice}}</strong></h4>
+				
+			</div>
+		</div>
+	</div>
+	<div class="col s12 m8">
+		<div class="card grey darken-1 z-depth-5">
+			<div class="card-content white-text">
+				<div class="card-body">
+					<table class="table table-sm">
+						<tr>
+							<th>Product</th>
+							<th><i class="material-icons left">note</i>Note</th>
+							<th><i class="material-icons left">date_range</i>Date Orderd</th>
+							<th>Status</th>
+							<th>Update</th>
+							<th>Remove</th>
+						</tr>
+
+						{% for order in orders %}
+
+						<tr>
+							<td>{{order.product}}</td>
+							<td>{{order.note}}</td>
+							<td>{{order.date_created}}</td>
+							<td>{{order.status}}</td>
+							<td><a class=" waves-effect btn-small green lighten-1" href="{% url 'update_order' order.id %}"><i class="material-icons left">edit</i>Update</a></td>
+							<td><a class="waves-effect btn-small red" href="{% url 'delete_order' order.id %}"><i class="material-icons left">delete</i>Delete</a></td>
+						</tr>
+						{% endfor %}
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+{% endblock %}

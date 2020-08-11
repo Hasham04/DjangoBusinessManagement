@@ -1,0 +1,243 @@
+{%  extends 'accounts/main.html' %}
+{% load static %}
+{% block content %}
+{%  include 'accounts/status.html' %}
+<script>
+
+	var state= {
+		'items':[],
+		'values':[],
+	}
+	var dataUrl="resultsData/"
+	$.ajax({
+		method:'GET',
+		url:dataUrl,
+		success:function(response){
+			//console.log('RESPONSE:', response)
+			for (var i in response){
+				
+				var key = Object.keys(response[i])[0]
+				console.log(key)
+				var value = Object.values(response[i])[0]
+
+				state.items.push(key)
+				state.values.push(value)
+
+			}
+			//console.log('STATE',state)
+			buildChart()
+		}
+	})
+
+	function buildChart(){
+		var chartData = {
+			"type": "bar",
+			 title: {
+    			text: "Business Per Customer"
+    		},
+    		subtitle: {
+  				text: "Click Chart For Options"
+			},
+			 plot: {
+    			'background-color': "#56ab2f #a8e063"
+  			},
+			"scale-x":{
+			label: { /* Scale Title */
+      			text: "Customers",
+    			},
+			labels: state.items,
+			"items-overlap":true,
+			"max-items":100,
+			},
+			"scale-y":{
+				    label: {
+      					text: "Total Business ($)",
+    				},
+			},
+			"series":[
+				{
+					"values":
+						state.values
+				}
+			]
+		}
+		zingchart.render({
+			id:"myChart",
+			data: chartData,
+		});
+	}
+
+
+</script>
+
+<script>
+	var key = []
+	var value2 = []
+
+	var dataUrl2="resultsOrders/"
+	$.ajax({
+		method:'GET',
+		url:dataUrl2,
+		success:function(response){
+			//console.log('RESPONSE2:', response)
+				
+			key2 = Object.keys(response)
+				//console.log(key2)
+			value2 = Object.values(response)
+
+			buildChart2()
+		}
+	})
+
+	function buildChart2(){
+		var chartData2 = {
+			"type": "bar",
+			 title: {
+    			text: "Orders Per Product"
+    		},
+    		subtitle: {
+  				text: "Click Chart For Options"
+			},
+			 plot: {
+    			'background-color': "red orange"
+  			},
+			"scale-x":{
+			label: { /* Scale Title */
+      			text: "Products",
+    			},
+			"values": key2,
+			"items-overlap":true,
+			"max-items":100,
+
+			},
+			"scale-y":{
+				    label: {
+      					text: "Orders",
+    				},
+			},
+			"series":[
+				{
+					"values":
+						value2
+				}
+			],
+			"items-overlap":true,
+			"max-items":20
+		}
+		zingchart.render({
+			id:"myChart2",
+			data: chartData2,
+		});
+	}
+
+	
+</script>
+
+<style>
+	.profile-pic{
+		max-width: 50px;
+		max-height:50px;
+		margin: 0 auto;
+		border-radius: 20%;
+	}
+</style>
+<div class="row">
+    <div class="col s12 m12">
+    	<div id="myChart"></div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col s12 m12">
+    	<div id="myChart2"></div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col s12 m5">
+      <div class="card blue-grey darken-1 z-depth-5">
+        <div class="card-content white-text">
+        	<a class="waves-effect btn-large btn-block green darken-1" href="{% url 'create_customer' %}"><i class="material-icons left">add</i>Create Customer</a>
+			<table class="responsive-table">
+				<tr >
+					<th></th>
+					<th></th>
+					<th><i class="material-icons left">person</i>Customer</th>
+					<th><i class="material-icons left">phone</i>Phone</th>
+				</tr>
+
+				{% for customer in customers %}
+					<tr>
+						<td><a class="waves-effect  btn-small btn-block blue lighten-1" href="{% url 'customer' customer.id %}"><i class="material-icons left">pageview</i>View</a></td>				
+						<td><img class="profile-pic" src="{{MEDIA_URL}}{{customer.profile_pic.url}}"></td>
+						<td>{{customer.name}}</td>
+						<td>{{customer.phone}}</td>
+					</tr>
+				{% endfor %}
+
+			</table>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col s12 m7">
+      <div class="card blue-grey darken-1 z-depth-5">
+        <div class="card-content white-text">
+        	<h5>Orders:</h5>
+        	<hr>
+			<table class="responsive-table">
+				<tr>
+					<th>Product</th>
+					<th>Price</th>
+					<th><i class="material-icons left">date_range</i>Date Orderd</th>
+					<th>Status</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+
+				{% for order in page_obj %}
+					<tr>
+						<td>{{order.product}}</td>
+						<td>$ {{order.product.price}}</td>
+						<td>{{order.date_created}}</td>
+						<td>{{order.status}}</td>
+						<td><a class=" waves-effect btn-small green lighten-1" href="{% url 'update_order' order.id %}"><i class="material-icons left">edit</i>Update</a></td>
+						<td><a class="waves-effect btn-small red" href="{% url 'delete_order' order.id %}"><i class="material-icons left">delete</i>Delete</a></td>
+
+					</tr>
+				{% endfor %}
+		
+			</table>
+		</div>
+		<div class="pagination">
+	      {% if page_obj.has_previous %}
+	        <a class=" waves-effect btn btn-small" href="?page=1">First</a>&nbsp;
+	        <a class=" waves-effect btn btn-small" href="?page={{ page_obj.previous_page_number }}">Previous</a>&nbsp;
+	      {% endif %}
+
+	      {% for num in page_obj.paginator.page_range %}
+	        {% if page_obj.number == num %}
+	          <a class=" waves-effect btn btn-small" href="?page={{ num }}">{{ num }}</a>&nbsp;
+	        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+	          <a class="waves-effect btn btn-small" href="?page={{ num }}">{{ num }}</a>&nbsp;
+	        {% endif %}
+	      {% endfor %}
+
+	      {% if page_obj.has_next %}
+	        <a class="waves-effect btn btn-small" href="?page={{ page_obj.next_page_number }}">Next</a>&nbsp;
+	        <a class="waves-effect btn btn-small" href="?page={{ page_obj.paginator.num_pages }}">Last</a>&nbsp;
+	      {% endif %}
+			
+		</div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+
